@@ -5,27 +5,26 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LabT2.Models;
 
-namespace LabT2.Models
+namespace LabT2.Controllers
 {
-    public class BankAccountTest : Controller
+    public class BankAccountController : Controller
     {
-        private static IApiRequestSend<BankAcount> _iApiRequestSend;
-
+        public IApiRequestSend<BankAcount> IApiRequestSend;
         public List<BankAcount> TheAcount;
 
-        public BankAccountTest(IApiRequestSend<BankAcount> iApiRequestSend)
+        public BankAccountController(IApiRequestSend<BankAcount> iApiRequestSend)
         {
-            _iApiRequestSend = iApiRequestSend;
+            IApiRequestSend = iApiRequestSend;
             TheAcount = new List<BankAcount>();
         }
         
 
         public List<BankAcount> GetAllData()
         {
-            var theReturn = _iApiRequestSend.GetAllData();
-            if(theReturn == null)
+            var theReturn = IApiRequestSend.GetAllData();
+            if(theReturn == null || theReturn.Count == 0)
             {
-                return new List<BankAcount>();
+                return TheAcount;
             }
             else
             {
@@ -35,12 +34,8 @@ namespace LabT2.Models
 
         public void AddAcount(BankAcount B)
         {
-            if(_iApiRequestSend == null)
-            {
-                //_iApiRequestSend = new IApiRequestSend<BankAcount>();
-            }
             TheAcount.Add(B);
-            _iApiRequestSend.AddEntity(B);
+            IApiRequestSend.AddEntity(B);
         }
 
         public void ModifyAcount(int id, BankAcount B)

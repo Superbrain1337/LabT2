@@ -15,17 +15,31 @@ namespace LabT2XUnitTestProject
         {
             //Arrange
             var Mockservice = new Mock<IApiRequestSend<BankAcount>>();
-            //var items = new List<BankAcount> { new BankAcount { Personnummer = 940806 } };
-            //Mockservice.Setup(m => m.GetAllData()).Returns(new List<BankAcount>());
 
-            BankAccountTest BAT = new BankAccountTest(Mockservice.Object);
+            BankAccountController BAC = new BankAccountController(Mockservice.Object);
 
             //Act
-            //var theReturn1 = Mockservice.Object.GetAllData();
-            var theReturn2 = BAT.GetAllData();
+            var theReturn = BAC.GetAllData();
+            
+            Assert.Empty(theReturn);
+            Mockservice.Verify(m => m.GetAllData(), Times.Once);
+        }
 
-            //Assert.Equal(theReturn1, theReturn2);
-            Assert.Empty(theReturn2);
+        [Fact]
+        public void GetAllData_NotEmptyList()
+        {
+            //Arrange
+            var Mockservice = new Mock<IApiRequestSend<BankAcount>>();
+
+            BankAccountController BAC = new BankAccountController(Mockservice.Object);
+            BankAcount B = new BankAcount { Personnummer = 940806 };
+
+            //Act
+            BAC.IApiRequestSend.AddEntity(B);
+            BAC.TheAcount.Add(B);
+            var theReturn = BAC.GetAllData();
+
+            Assert.Single(theReturn);
             Mockservice.Verify(m => m.GetAllData(), Times.Once);
         }
 
@@ -34,15 +48,14 @@ namespace LabT2XUnitTestProject
         {
             //Arrange
             var Mockservice = new Mock<IApiRequestSend<BankAcount>>();
-            //Mockservice.Setup(m => m.AddAcount(It.IsAny<BankAcount>()));
 
-            BankAccountTest BAT = new BankAccountTest(Mockservice.Object);
+            BankAccountController BAC = new BankAccountController(Mockservice.Object);
             BankAcount B = new BankAcount { Personnummer = 940806 };
 
-            BAT.AddAcount(B);
-            //Mockservice.Object.AddAcount(B);
+            //Act
+            BAC.AddAcount(B);
 
-            Assert.Single(BAT.TheAcount);
+            Assert.Single(BAC.TheAcount);
             Mockservice.Verify(m => m.AddEntity(It.IsAny<BankAcount>()), Times.Once);
 
         }
@@ -52,18 +65,16 @@ namespace LabT2XUnitTestProject
         {
             //Arrange
             var Mockservice = new Mock<IApiRequestSend<BankAcount>>();
-            //Mockservice.Setup(m => m.AddAcount(It.IsAny<BankAcount>()));
 
-            BankAccountTest BAT = new BankAccountTest(Mockservice.Object);
+            BankAccountController BAC = new BankAccountController(Mockservice.Object);
             BankAcount A = new BankAcount { Personnummer = 940806 };
             BankAcount B = new BankAcount { Personnummer = 910531 };
             
-            BAT.TheAcount.Add(A);
-            BAT.AddAcount(B);
-            //Mockservice.Object.AddAcount(A);
-            //Mockservice.Object.AddAcount(B);
+            //Act
+            BAC.TheAcount.Add(A);
+            BAC.AddAcount(B);
 
-            Assert.Equal(2, BAT.TheAcount.Count);
+            Assert.Equal(2, BAC.TheAcount.Count);
             Mockservice.Verify(m => m.AddEntity(It.IsAny<BankAcount>()), Times.Once());
         }
     }
